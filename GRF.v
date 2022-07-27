@@ -47,8 +47,8 @@ module GRF(
 			regs[28] = 32'h00001800;  // 全局指针  $gp
 			regs[29] = 32'h00000ffc;  // 堆栈指针  $sp
 		end
-		else if(WEnable&&WAddr > 0) begin
-		    regs[WAddr]<=WData;
+		else if(WEnable && WAddr > 0) begin
+		    regs[WAddr] <= WData;
 			$display("@%h: $%d <= %h", IAddr, WAddr,WData);
 		end
 	 end

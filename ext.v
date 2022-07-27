@@ -46,7 +46,7 @@ endmodule
 module extbyte(
 	input [7:0]	imm,
 	input EOp,
-	output [31:0]ext
+	output [31:0] ext
 );
-	 assign ext=EOp?{24'b0,imm}:{{24{imm[7]}},imm};
+	assign ext = EOp ? {24'b0, imm} : {{24{imm[7]}}, imm};
 endmodule

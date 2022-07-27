@@ -22,12 +22,12 @@ module DM_8bit(
 	input 		clk,  // 时钟信号
 	input 		WE,   // 写入使能信号
 	input 		reset, // 复位信号(同步复位)
-	input 		isu,  
+	input 		isu,  // 是否无符号加载
 	input [1:0]	MemDst,  // 内存操作类型
 	input [11:0] Addr,  // 12位地址
 	input [31:0] WData,  // 32位写入数据
 	input [31:0] IAddr,  // 32位输入当前指令地址
-	output [31:0] RData
+	output [31:0] RData  // 32位读取数据
 );
     reg [7 : 0]   ram [0 : 4095];  // 8 * 4096
 	wire [31 : 0]	out1;
@@ -62,6 +62,15 @@ module DM_8bit(
 		end
 	 end
 	 ext extend1({ram[Addr + 1], ram[Addr]}, {1'b0, isu}, out1); //lb,lbu 加载字节 加载无符号字节
-	 extbyte extend2(ram[Addr], isu, out2); // lh, lhu
-	 assign RData = (MemDst == 3) ? {ram[Addr+3], ram[Addr+2], ram[Addr+1], ram[Addr]} : (MemDst[0] ? out1 : out2);
+	 extbyte extend2(ram[Addr], isu, out2); // lh, lhu  加载半字，加载无符号半字
+//	 assign RData = (MemDst == 3) ? {ram[Addr+3], ram[Addr+2], ram[Addr+1], ram[Addr]} : (MemDst[0] ? out1 : out2);
+	if (MemDst == 3) begin
+		RData = {ram[Addr+3], ram[Addr+2], ram[Addr+1], ram[Addr]};
+	end
+	else if (MemDst[0]) begin
+		RData = out1;
+	end
+	else if(MemDst[0] == 0) begin
+		RData = out2;
+	end
 endmodule
