@@ -40,7 +40,7 @@ module ext(
 			end
 		endcase
 	 end
-	 assign ext=out;
+	 assign ext = out;
 endmodule
 
 module extbyte(

@@ -179,5 +179,5 @@ module Controller(
 		endcase
 		end
 	 end
-	 assign {ExtOp, RegWrite, RegDst, ALUSrc, Branch, MemWrite, RegSrc, Jump, ALUCtrl } = control_signals;
+	 assign {ExtOp, RegWrite, RegDst, ALUSrc, Branch, MemWrite, MemtoReg, Jump, ALUCtrl } = control_signals;
 endmodule

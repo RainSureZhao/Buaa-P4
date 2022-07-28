@@ -28,7 +28,7 @@ module Instr_Memory(
 	    for(i = 0; i < 1024; i = i + 1) begin
 			rom[i] = 0;
 		end
-		$readmemh("code.txt", rom);
+		$readmemh("code.txt", rom, 0);
 	end
 	assign RData = rom[RAddr];
 endmodule
