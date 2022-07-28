@@ -26,8 +26,8 @@
 	//1 : 判断负数
 	//2 : 加法运算
 	//3 : 减法运算
-	//4 : 按位与
-	//5 : 按位或
+	//4 : 按位与运算
+	//5 : 按位或运算
 	//6 : 按位异或
 	//7 : 按位或非
 	//8 : 逻辑右移
@@ -39,7 +39,7 @@
 	//14 : op1 大于 0判断
 	//15 : op1 小于 0 判断
 	output [31:0]	result,
-	output reg zero
+	output zero
 );
     reg [31:0] res;
 	 always @(*) begin
@@ -95,5 +95,5 @@
 		endcase
 	 end
 	 assign result = res;
-	 assign zero = ( res == 0);  // 结果是否为0
+	 assign zero = ( res == 0);  // 结果是否等于0
 endmodule

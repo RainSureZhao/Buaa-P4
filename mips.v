@@ -25,7 +25,7 @@ module mips(
    
     wire [31:0]	IAddr;
 	wire [31:0]	next;
-	wire [31:0	]Instr;
+	wire [31:0] Instr;
 	wire Jump, MemWrite, Branch, RegWrite, zero;
 	wire [1:0]	MemtoReg;
 	wire [1:0]	RegDst;
@@ -46,18 +46,18 @@ module mips(
 	parameter condition = 1'b1;
 
 	assign temp = IAddr + 4;
-	assign next = Jump ? (ALUSrc[0] ? { temp[31:28], Instr[25:0], 2'b00} : RData1) : ((Branch&&zero) ? temp + Imm : temp);
+	assign next = Jump ? (ALUSrc[0] ? { temp[31:28], Instr[25:0], 2'b00} : RData1) : ((Branch && zero) ? temp + Imm : temp);
 	assign RegWAddr = RegDst[1] ? 5'd31 : (RegDst[0] ? Instr[15:11] : Instr[20:16]);
 	assign SrcA = ALUSrc[1] ? {27'b0, Instr[10:6]} : RData1;
-	assign SrcB = ALUSrc[0] ? Imm:RData2;
+	assign SrcB = ALUSrc[0] ? Imm : RData2;
 	assign WData = MemtoReg[1] ? temp : (MemtoReg[0] ? RData : ALUResult);
 	 
-	PC pc(clk, reset, next, IAddr);
-	Instr_Memory im(IAddr[11:2], Instr);
-	Controller controller(Instr, Jump, MemtoReg, MemWrite, Branch, ALUSrc, RegDst, RegWrite,ExtOp,ALUCtrl);
-	GRF grf(clk, Branch && condition ? ( RegWrite && zero ) : RegWrite, reset, Instr[25:21], Instr[20:16], RegWAddr, WData, IAddr, RData1, RData2);
-	ALU alu(SrcA, SrcB, ALUCtrl, ALUResult, zero);
-	ext extender(Instr[15:0], ExtOp, Imm);
+	PC pc(.clk(clk), .reset(reset), .next(next), .IAddr(IAddr));
+	Instr_Memory im(.RAddr(IAddr[11:2]), .RData(Instr));
+	Controller controller(.cmd(Instr), .Jump(Jump), .MemtoReg(MemtoReg), .MemWrite(MemWrite), .Branch(Branch), .ALUSrc(ALUSrc), .RegDst(RegDst), .RegWrite(RegWrite), .ExtOp(ExtOp), .ALUCtrl(ALUCtrl));
+	GRF grf(.clk(clk), .WEnable(Branch && condition ? ( RegWrite && zero ) : RegWrite), .reset(reset), .RAddr1(Instr[25:21]), .RAddr2(Instr[20:16]), .WAddr(RegWAddr), .WData(WData), .IAddr(IAddr), .RData1(RData1), .RData2(RData2));
+	ALU alu(.op1(SrcA), .op2(SrcB), .sel(ALUCtrl), .result(ALUResult), .zero(zero));
+	ext extender(.imm(Instr[15:0]), .EOp(ExtOp), .ext(Imm));
 	 //Data_Memory dm(clk,MemWrite,reset,ALUResult[11:2],RData2,IAddr,RData);
-	DM_8bit DM(clk, MemWrite, reset, Instr[28], Instr[27:26], ALUResult[11:0], RData2, IAddr, RData);
+	DM_8bit DM(.clk(clk), .WE(MemWrite), .reset(reset), .isu(Instr[28]), .MemDst(Instr[27:26]), .Addr(ALUResult[11:0]), .WData(RData2), .IAddr(IAddr), .RData(RData));
 endmodule

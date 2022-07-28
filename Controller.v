@@ -22,7 +22,7 @@
 module Controller(
 	input [31:0] cmd,  // 当前指令
 	output Jump,   // 跳转信号
-	output [1:0]MemtoReg,  // 读内存信号
+	output [1:0] MemtoReg,  // 读内存信号
 	output MemWrite,  // 内存写使能信号
 	output Branch,  // 分支信号
 	output [1:0]ALUSrc,  // ALU操作数2的来源，0 : 寄存器；1 : 立即数
@@ -31,11 +31,14 @@ module Controller(
 	output [1:0]RegDst,  // 寄存器写地址选择，0 : cmd[20 : 17], 1 : cmd[15 : 11]
 	output RegWrite  // 寄存器写使能信号
 );
-    //{ext,RegWrite,[1:0]MemtoReg,[1:0]ALUSrc,Branch,MemWrite,[1:0]RegSrc,Jump,[4:0]ALUCtrl,hilo,}
+// ExtOp, RegWrite, RegDst, ALUSrc, Branch, MemWrite, RegSrc, Jump, ALUCtrl
 	 reg [16:0] control_signals;
 	 always @(cmd) begin
-	     if(cmd == 0) control_signals = 0; // nop操作
-	     else case(cmd[31 : 26])  // 根据Opcode段进行判断指令
+	     if(cmd == 0) begin
+			control_signals = 0; // nop操作
+		 end
+		 else begin
+			case(cmd[31 : 26])  // 根据Opcode段进行判断指令
 		    0 : case( cmd [5:0])  // Opcode为0时，根据功能码进行判断
 				    0 : begin 
 						control_signals = 17'b00_1_01_10_00_00_0_01010; 	//sll
@@ -107,34 +110,34 @@ module Controller(
 				end
 				//{[1:0]ext,RegWrite,[1:0]RegDst,[1:0]ALUSrc,Branch,MemWrite,[1:0]RegSrc,Jump,[4:0]ALUCtrl}
 				2 : begin
-					control_signals=17'b00_0_00_01_00_00_1_00000; //j
+					control_signals=17'b00_0_00_01_00_00_1_00000; // j
 				end
 				3 : begin
-					control_signals=17'b00_1_10_01_00_10_1_00000; //jal
+					control_signals=17'b00_1_10_01_00_10_1_00000; // jal
 				end
 				4 : begin
-					control_signals=17'b11_0_00_00_10_00_0_00110; //beq
+					control_signals=17'b11_0_00_00_10_00_0_00110; // beq
 				end
 				5 : begin
-					control_signals=17'b11_0_00_00_10_00_0_01011; //bne
+					control_signals=17'b11_0_00_00_10_00_0_01011; // bne
 				end
 				6 : begin
-					control_signals=17'b11_0_00_00_10_00_0_01110; //blez
+					control_signals=17'b11_0_00_00_10_00_0_01110; // blez
 				end
 				7 : begin
-					control_signals=17'b11_0_00_00_10_00_0_01111; //bgtz
+					control_signals=17'b11_0_00_00_10_00_0_01111; // bgtz
 				end
 				8 : begin
-					control_signals=17'b00_1_00_01_00_00_0_00010;//addi
+					control_signals=17'b00_1_00_01_00_00_0_00010;// addi
 				end
 				9 : begin
-					control_signals=17'b00_1_00_01_00_00_0_00010;//addiu
+					control_signals=17'b00_1_00_01_00_00_0_00010;// addiu
 				end
 				10 : begin
-					control_signals=17'b00_1_00_01_00_00_0_01100;//slti//
+					control_signals=17'b00_1_00_01_00_00_0_01100;// slti
 				end
 				11 : begin
-					control_signals=17'b00_1_00_01_00_00_0_01101;//sltiu
+					control_signals=17'b00_1_00_01_00_00_0_01101;// sltiu
 				end
 				12 : begin
 					control_signals=17'b01_1_00_01_00_00_0_00100;//andi
@@ -174,6 +177,7 @@ module Controller(
 					control_signals=17'b00_0_00_01_01_00_0_00010;//sw
 				end
 		endcase
+		end
 	 end
 	 assign {ExtOp, RegWrite, RegDst, ALUSrc, Branch, MemWrite, RegSrc, Jump, ALUCtrl } = control_signals;
 endmodule

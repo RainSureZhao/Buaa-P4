@@ -23,7 +23,7 @@ module DM_8bit(
 	input 		WE,   // 写入使能信号
 	input 		reset, // 复位信号(同步复位)
 	input 		isu,  // 是否无符号加载
-	input [1:0]	MemDst,  // 内存操作类型
+	input [1:0]	 MemDst,  // 内存操作类型
 	input [11:0] Addr,  // 12位地址
 	input [31:0] WData,  // 32位写入数据
 	input [31:0] IAddr,  // 32位输入当前指令地址
@@ -47,7 +47,7 @@ module DM_8bit(
 		else if(WE) begin
 			case(MemDst)
 				0 : begin
-					ram[Addr] = WData[7 : 0]; //sb  存储一个字节 8位
+					ram[Addr] = WData[7 : 0]; //sb  存储1个字节 8位
 					$display("@%h: *%h <= %h",IAddr, {20'b0, Addr}, {24'b0, WData[7:0]});
 				end
 				1 : begin
@@ -63,14 +63,14 @@ module DM_8bit(
 	 end
 	 ext extend1({ram[Addr + 1], ram[Addr]}, {1'b0, isu}, out1); //lb,lbu 加载字节 加载无符号字节
 	 extbyte extend2(ram[Addr], isu, out2); // lh, lhu  加载半字，加载无符号半字
-//	 assign RData = (MemDst == 3) ? {ram[Addr+3], ram[Addr+2], ram[Addr+1], ram[Addr]} : (MemDst[0] ? out1 : out2);
-	if (MemDst == 3) begin
-		RData = {ram[Addr+3], ram[Addr+2], ram[Addr+1], ram[Addr]};
-	end
-	else if (MemDst[0]) begin
-		RData = out1;
-	end
-	else if(MemDst[0] == 0) begin
-		RData = out2;
-	end
+	 assign RData = (MemDst == 3) ? {ram[Addr+3], ram[Addr+2], ram[Addr+1], ram[Addr]} : (MemDst[0] ? out1 : out2);
+//	if (MemDst == 3) begin
+//		assign RData = {ram[Addr+3], ram[Addr+2], ram[Addr+1], ram[Addr]};
+//	end
+//	else if (MemDst[0]) begin
+//		assign RData = out1;
+//	end
+//	else if(MemDst[0] == 0) begin
+//		assign RData = out2;
+//	end
 endmodule

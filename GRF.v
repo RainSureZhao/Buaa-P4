@@ -20,15 +20,15 @@
 //////////////////////////////////////////////////////////////////////////////////
 module GRF(
 	input 			clk,     // 寄存器堆部分实现
-	input 			WEnable,
-	input 			reset,
-	input 	[4:0]	RAddr1,
-	input 	[4:0]	RAddr2,
-	input 	[4:0]	WAddr,
-	input 	[31:0]	WData,
-	input 	[31:0]	IAddr,
-	output 	[31:0]	RData1,
-	output 	[31:0]	RData2
+	input 			WEnable,  // 寄存器写使能信号
+	input 			reset,  // 复位信号
+	input 	[4:0]	RAddr1,  // 第一个读出寄存器编号
+	input 	[4:0]	RAddr2,  // 第二个读出寄存器编号
+	input 	[4:0]	WAddr,  // 写寄存器的编号
+	input 	[31:0]	WData,  // 写入寄存器的值
+	input 	[31:0]	IAddr,  // 32位当前输入指令的地址
+	output 	[31:0]	RData1,  // 第一个寄存器读出的值
+	output 	[31:0]	RData2  // 第二个寄存器读出的值
 );
     reg [31:0] regs [0:31];   // 32个32位寄存器
 	integer i;
